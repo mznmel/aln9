@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <style>
+        @import url(http://fonts.googleapis.com/earlyaccess/droidarabicnaskh.css);
+
+        * {
+            font-family: 'Droid Arabic Naskh', serif;
+            direction: rtl;
+        }
+
+        #aln9 {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            float: right;
+        }
+
+        #aln9_preview {
+            background-color: #eee;
+            float: right;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            overflow: auto;
+            padding: 10px;
+        }
+
+        .center-text {
+            text-align: center;
+        }
+
+        strong {
+            font-size: 1.3em;
+        }
+
+        q {
+            color: #868686;
+            text-align: center;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<h1>
+    نموذج أولي للغة تنسيق النصوص العربية "النص"
+</h1>
+
+<textarea id="aln9">
+#     "النص"
+####     لغة تنسيق النصوص العربية
+--------------------------------------------------------
+لغة تنسيق النصوص العربية (((__"النص"__:::https://github.com/mkhDev/aln9))) تم تصميمها لتتوافق مع النص العربي بحيث تسمح للمستخدم العربي بكتابة نصوص و تنسيقها بطريقة سهلة و ميسرة. هذه اللغة مشابهة و مستوحاة من لغات اجنبية مثل Markdown و Textile و BBCode .. الخ.
+--------------------------------------------------------
+طريقة كتابة إقتباس:
+""إقتباس: إذا لم تضف شيئاً إلى الحياة فأنت زائد عليها -- الرافعي""
+
+طريقة كتابة عناوين بأحجام مختلفة:
+# عنوان 1
+## عنوان 2
+### عنوان 3
+#### عنوان 4
+##### عنوان 5
+###### عنوان 6
+
+طريقة كتابة عناوين مع توسيطها:
+#     عنوان في المنتصف 1
+##     عنوان في المنتصف 2
+###     عنوان في المنتصف 3
+####     عنوان في المنتصف 4
+#####     عنوان في المنتصف 5
+######     عنوان في المنتصف 6
+
+طريقة كتابة قائمة :
+* عنصر قائمة 1
+* عنصر قائمة 2
+* عنصر قائمة 3
+* عنصر قائمة 4
+
+طريقة كتابة نص ثخين: __نص ثخين__
+
+طريقة كتابة روابط:
+(((مدونة مازن مليباري:::http://mazen.ws)))
+(((http://mazen.ws)))
+
+طريقة إضافة خط عرضي:
+----------------------------------------------------------------
+
+طريقة إضافة جدول المحتويات:
+(((جدول المحتويات)))
+</textarea>
+<div id="aln9_preview">Test</div>
+
+<script>
+function aln9(t) {
+
+    var toc = [];
+
+    // clean
+    t = t.replace(/\r/g, "");
+
+    // headings
+
+    function heading_name_sanitize(name) {
+        return name.replace(/\"/gm, "");
+    }
+
+    t = t.replace(/^(#+)( +)(.*)$/gm, function(m1, m2, m3, m4) {
+        var h_title = m4.trim();
+        var h_len = m2.length;
+        var h_class = "";
+
+        if(m3.length >= 5) {
+            h_class = "center-text"
+        } else {
+            toc.push(h_title);
+        }
+
+        return "<h" + h_len + " class=\"" + h_class + "\">"
+                + "<a name=\"" + heading_name_sanitize(h_title) + "\">\n"
+                +  h_title
+                + "</a></h" + h_len + ">\n";
+    });
+
+    // toc
+    var toc_html = "<ul>";
+    for(var i = 0; i < toc.length; i++) {
+        toc_html += "<li><a href=\"#" + heading_name_sanitize(toc[i])  + "\">" + toc[i] + "</a></li>"
+    }
+    toc_html += "</ul>";
+    t = t.replace("(((جدول المحتويات)))", toc_html);
+
+    // ul list
+    t = t.replace(/^\*[\s\S]*?\n[^\*]/gm, function(m1) {
+        var items = m1.trim().split('\n');
+        var lst_html = "<ul>";
+        for(var i = 0; i < items.length; i++) {
+            lst_html += "<li>" + items[i].substring(1, items[i].length) + "</li>";
+        }
+        lst_html += "</ul>\n";
+        return lst_html;
+    });
+
+    // bold
+    t = t.replace(/\_\_(.*)\_\_/gm, "<strong>$1</strong>");
+
+    // hr
+    t = t.replace(/\-\-\-\-\-(\-+)/gm, "<hr>\n");
+
+
+    // q
+    t = t.replace(/\"\"(.*?)\"\"/gm, "<q>$1</q>\n");
+
+    // link with a title
+    t = t.replace(/\(\(\((.*?)((\:\:\:)(.*?))?\)\)\)/gm, function(m1, m2, m3) {
+        var link_title = m2;
+        var link_src = "";
+
+        if(m3) {
+            link_src = m3.substring(3, m3.length) // removes ':::'
+        } else {
+            link_src = m2;
+        }
+
+        return "<a href=\"" + link_src + "\">" + link_title + "</a>\n";
+    });
+
+    // p
+    t = t.replace(/\n\n([^\n]+)\n/gm, "<p>$1</p>\n");
+
+    return t;
+}
+
+$(function() {
+
+    var obj_aln9 = $("#aln9");
+    var obj_aln9_preview = $("#aln9_preview");
+
+    function update_preview() {
+        obj_aln9_preview.html(aln9(obj_aln9.val()));
+    }
+
+    function init_ui() {
+        var bw = $("body").width() - 40;
+        var bh = $(document).height() - 150;
+
+        obj_aln9.width(bw/2);
+        obj_aln9_preview.width(bw/2);
+
+        obj_aln9.height(bh);
+        obj_aln9_preview.height(bh);
+    }
+
+
+    init_ui();
+    update_preview();
+
+    obj_aln9.keyup(function() {
+        update_preview();
+    });
+
+    $(window).resize(function() {
+        init_ui();
+    });
+});
+</script>
+</body>
+</html>
