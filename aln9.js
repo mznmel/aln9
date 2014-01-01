@@ -73,6 +73,8 @@ function aln9(t) {
 
 	// نص مائل
 	t = t.replace(/\\\s?(.+)\\\s?/gm,"<i>$1</i>");
+	// نص يتوسطه خط
+	t = t.replace(/=-\s?(.+)\s?-=/gm,"<del>$1</del>");
 	
     // p
     t = t.replace(/\n\n([^\n]+)\n/gm, "<p>$1</p>\n");
