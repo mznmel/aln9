@@ -77,6 +77,8 @@ function aln9(t) {
 	t = t.replace(/=-\s?(.+)\s?-=/gm,"<del>$1</del>");
 	// نص اسفله خط
 	t = t.replace(/=_\s?(.+)\s?_=/gm,"<ins>$1</ins>");
+	// النص اعلى من النص الافتراضي
+	t = t.replace(/=\^\s?(.+)\s?\^=/gm,"<sup>$1</sup>");
 	
     // p
     t = t.replace(/\n\n([^\n]+)\n/gm, "<p>$1</p>\n");
