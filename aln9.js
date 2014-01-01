@@ -81,6 +81,8 @@ function aln9(t) {
 	t = t.replace(/=\^\s?(.+)\s?\^=/gm,"<sup>$1</sup>");
 	// النص ادنى من النص الافتراضي
 	t = t.replace(/=&\s?(.+)\s?&=/gm,"<sub>$1</sub>");
+	// تلوين النص بطريقة Hex ثلاثية وسداسية
+	t = t.replace(/\@\((#([a-zA-Z]|[0-9]){3,6})\)\s?(.+)@/gm,"<span style=\"color: $1;\">$3</span>");
 	
     // p
     t = t.replace(/\n\n([^\n]+)\n/gm, "<p>$1</p>\n");
