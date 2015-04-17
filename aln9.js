@@ -6,7 +6,6 @@ function aln9(t) {
     t = t.replace(/\r/g, "");
 
     // headings
-
     function heading_name_sanitize(name) {
         return name.replace(/\"/gm, "");
     }
@@ -16,7 +15,7 @@ function aln9(t) {
         var h_len = m2.length;
         var h_class = "";
 
-        if(m3.length >= 5) {
+        if (m3.length >= 5) {
             h_class = "center-text"
         } else {
             toc.push(h_title);
@@ -70,8 +69,7 @@ function aln9(t) {
 
         return "<a href=\"" + link_src + "\">" + link_title + "</a>\n";
     });
-
-	// نص مائل
+    // نص مائل
 	t = t.replace(/\\\s?(.+)\\\s?/gm,"<i>$1</i>");
 	// نص يتوسطه خط
 	t = t.replace(/=-\s?(.+)\s?-=/gm,"<del>$1</del>");
@@ -81,10 +79,13 @@ function aln9(t) {
 	t = t.replace(/=\^\s?(.+)\s?\^=/gm,"<sup>$1</sup>");
 	// النص ادنى من النص الافتراضي
 	t = t.replace(/=&\s?(.+)\s?&=/gm,"<sub>$1</sub>");
-	// تلوين النص بطريقة Hex ثلاثية وسداسية
+	// تلوين النص بطريقة Hex ثلاثية و سداسية
 	t = t.replace(/\@\((#([a-zA-Z]|[0-9]){3,6})\)\s?(.+)@/gm,"<span style=\"color: $1;\">$3</span>");
-	t = t.replace(/@حجم\s{0,1}\(([0-9]+\s{0,1}(px|pt|%))\)(.+)@/gm,"<span style=\"font-size: $1;\">$3</span>");
-	
+    // حجم النص يقبل px, pt و em.
+    t = t.replace(/@حجم\s{0,1}\(([0-9]+\s{0,1}(px|pt|em|%))\)(.+)@/gm,"<span style=\"font-size: $1;\">$3</span>");
+    // نص برمجي
+    t = t.replace(/@_\s?(.+)\s?_@/gm,"<code>$1</code>");
+
     // p
     t = t.replace(/\n\n([^\n]+)\n/gm, "<p>$1</p>\n");
 

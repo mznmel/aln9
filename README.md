@@ -1,6 +1,7 @@
 aln9
 ====
-a lightweight markup language designed for Arabic text.
+A lightweight markup language designed for Arabic text.
+
 
 Demo
 ====
